@@ -6,7 +6,88 @@
 </head>
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
+<input id="base" type="color" name="base" value="#ffc600">
+<input id="rainbow" type="image" name="rainbow" src="./rainbow.jpg" width="28" height="28" value="rainbowColor">
+
 <script>
+
+  const canvas = document.querySelector('#draw');
+
+  //this is all for drawing
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  ctx.strokeStyle = "#ffc600";
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 50;
+
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 0;
+  let isRainbow = false;
+  let direction = true;
+  let erase = false;
+
+  function draw(e){
+
+    if(!isDrawing) return;
+    console.log(e);
+    
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+
+    if (isRainbow === true){
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      hue++;
+
+      if(hue >= 360){
+        hue = 0;
+      }
+    }
+    
+    if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1){
+      direction = !direction;
+    }
+
+    if(direction){
+      //ctx.lineWidth++;
+    }
+    else {
+      //ctx.lineWidth--;
+    }
+   
+    console.log(e);
+  }
+
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mousedown',(e)=>{
+    isDrawing=true;
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+  });
+  canvas.addEventListener('mouseup',()=>isDrawing=false);
+  canvas.addEventListener('mouseout',()=>isDrawing=false);
+
+function changeColor(){
+  this.value === "rainbowColor" ? isRainbow = true : isRainbow = false;
+
+  ctx.strokeStyle = this.value;
+};
+
+  const color = document.querySelector('#base');
+  const rainbowColor = document.querySelector("#rainbow");
+
+  color.addEventListener('change', changeColor);
+  rainbowColor.addEventListener('click', changeColor);
+
+
 </script>
 
 <style>
